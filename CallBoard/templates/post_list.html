@@ -1,0 +1,71 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+{% load custom_tags %}
+
+{% block title %}
+    Объявления
+{% endblock title %}
+
+{% block content %}
+    <h1>Объявления</h1>
+    <h2>Объявлений: {{ posts|length }}</h2>
+    {% if posts %}
+        {% for curr_post in posts %}
+            <hr>
+            <h3>{{ curr_post.title }}</h3>
+            <h4><i>Автор: {{ curr_post.author.username }}</i></h4>
+            <h5>{{ curr_post.creation_date|date:'d.m.Y' }}</h5>
+            <p>{{ curr_post.content|safe }}</p>
+            {% if user.is_authenticated %}
+                {% if curr_post|is_users_post:user %}
+                    <a href="{% url 'post_update' pk=curr_post.id %}">Редактировать</a>
+                    <a href="{% url 'post_delete' pk=curr_post.id %}">Удалить</a>
+                {% endif %}
+                {% if curr_post|is_not_users_post:user %}
+                    <a href="{% url 'reply_create' post_id=curr_post.id %}">Добавить отклик</a>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <h2>Нет объявлений!</h2>
+    {% endif %}
+
+    {# Добавляем пагинацию на страницу #}
+    <hr>
+    {# Информация о предыдущих страницах #}
+    {% if page_obj.has_previous %}
+        <a href = "?{% url_replace page=1 %}">1</a>
+        {% if page_obj.previous_page_number != 1 %}
+            {% if page_obj.previous_page_number > 2 %}
+                ...
+            {% endif %}
+            <a href = "?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+        {% endif %}
+    {% endif %}
+
+    {# Информация о текущей странице #}
+    {{ page_obj.number }}
+
+    {# Информация о следующих страницах #}
+    {% if page_obj.has_next %}
+        <a href = "?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+        {% if paginator.num_pages != page_obj.next_page_number %}
+            {% with prelast=page_obj.next_page_number|add:1 %}
+                {% if paginator.num_pages > prelast %}
+                    ...
+                {% endif %}
+            {% endwith %}
+            <a href = "?{% url_replace page=paginator.num_pages %}">{{ paginator.num_pages }}</a>
+        {% endif %}
+    {% endif %}
+
+    <hr>
+    {% if user.is_authenticated %}
+        <hr>
+        <a href="{% url 'post_create' %}">Добавить объявление</a>
+        <hr>
+    {% endif %}
+
+{% endblock content %}
