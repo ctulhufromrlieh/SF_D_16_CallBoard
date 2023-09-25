@@ -17,8 +17,8 @@ class Category(models.Model):
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    # creation_date = models.DateTimeField(auto_now_add=True)
-    title = models.CharField(max_length=255, unique=True, help_text="Category name")
+    creation_date = models.DateTimeField(auto_now_add=True)    # !!! For mass email sending !!!
+    title = models.CharField(max_length=255, unique=True)
     content = RichTextUploadingField()
 
     @property
@@ -41,3 +41,8 @@ class Reply(models.Model):
 
     def accept(self):
         self.is_accepted = True
+
+
+# for email mass sending
+class SchedulingMailData(models.Model):
+    last_send_date = models.DateTimeField()

@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 
 from .models import Post, Reply
@@ -107,7 +107,7 @@ class SearchedReplyList(LoginRequiredMixin, ListView):
     def get_queryset(self):
         # Получаем обычный запрос
         queryset = super().get_queryset()
-        # queryset = queryset.exclude(user__id=self.request.user.id)
+        queryset = queryset.exclude(user__id=self.request.user.id)
 
         self.filterset = ReplyFilter(self.request.GET, queryset)
         return self.filterset.qs
@@ -127,24 +127,38 @@ class ReplyCreate(UserPassesTestMixin, CreateView):
     success_url = reverse_lazy('post_list')
 
     def test_func(self):
-        post_id = self.kwargs.pop('post_id', None)
+        # post_id = self.kwargs.pop('post_id', None)
+        post_id = self.kwargs.get('post_id')
         post = Post.objects.get(id=post_id)
 
         return not post.author.id == self.request.user.id
-
-    # def get_form_kwargs(self):
-    #     kw = super(ReplyCreate, self).get_form_kwargs()
-    #     kw['user'] = self.request.user # the trick!
-    #     kw['post_id'] = self.kwargs.pop('post_id', None)
-    #     return kw
 
     def form_valid(self, form):
         post_id = self.kwargs.pop('post_id', None)
 
         self.object = form.save(commit=False)
+        print(post_id)
         self.object.post = Post.objects.get(id=post_id)
         self.object.user = User.objects.get(id=self.request.user.id)
         return super().form_valid(form)
+
+
+class ReplyDelete(UserPassesTestMixin, DeleteView):
+    model = Reply
+    template_name = 'reply_delete.html'
+    success_url = reverse_lazy('post_list')
+
+    def test_func(self):
+        the_object = self.get_object()
+        return the_object.post.author.id == self.request.user.id
+
+
+# def reply_accept_test_func(request):
+def is_allowed_reply_accept(user, reply):
+    if reply.is_accepted:
+        return False
+    if user.is_authenticated:
+        return not user.id == reply.user.id
 
 
 # @login_required
@@ -153,6 +167,10 @@ def reply_accept_func(request, reply_id):
     if request.method == 'POST':
         # reply_id = request.POST.get('reply_id')
         reply = Reply.objects.get(id=reply_id)
+
+        if not is_allowed_reply_accept(request.user, reply):
+            raise PermissionDenied
+
         reply.accept()
         reply.save()
 

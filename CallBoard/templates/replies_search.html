@@ -12,7 +12,6 @@
     <h1>Отклики:</h1>
     <form action="" method="get">
         {{ filterset.form.as_p }}
-        {# Добавим кнопку отправки данных формы #}
         <input type="submit" value="Найти" />
     </form>
 
@@ -22,6 +21,7 @@
     {% if replies %}
         {% for curr_reply in replies %}
             <hr>
+            <h2>Отклик на {{ curr_reply.post.title }}</h2>
             <h3>by {{ curr_reply.user.username }}</h3>
             <p>{{ curr_reply.text }}</p>
             {% if curr_reply.is_accepted %}
@@ -33,6 +33,7 @@
                 <input type="submit" value="Принять">
             </form>
             {% endif %}
+            <p><a href="{% url 'reply_delete' pk=curr_reply.id %}">Удалить</a></p>
         {% endfor %}
     {% else %}
         <h2>Нет откликов!</h2>

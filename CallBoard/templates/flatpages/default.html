@@ -19,7 +19,7 @@
         <!-- Responsive navbar-->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
            <div class="container">
-               <a class="navbar-brand" href="#">"Django flatpages"</a>
+               <a class="navbar-brand" href="/posts/">"Django flatpages"</a>
                <button class="navbar-toggler" type="button" data-toggle="collapse"
                        data-target="#navbarResponsive"
                        aria-controls="navbarResponsive" aria-expanded="false"
@@ -38,6 +38,11 @@
                        {% endif %}
                    </ul>
                </div>
+               {% if user.is_authenticated %}
+               <div style = "float: right; color: white;">
+                   Добро пожаловать, {{ user.username }}
+               </div>
+               {% endif %}
            </div>
         </nav>
         {% comment %} {% endcache %} {% endcomment %}

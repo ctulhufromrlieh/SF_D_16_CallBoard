@@ -24,7 +24,7 @@ from django.conf.urls.static import static
 
 from django.conf import settings
 # from django.conf.urls import url, include
-from posts.views import SearchedReplyList
+from posts.views import SearchedReplyList, ReplyDelete, reply_accept_func
 
 # import static
 
@@ -35,7 +35,9 @@ urlpatterns = [
     # path('ckeditor/', include('ckeditor.urls')),
     path('posts/', include('posts.urls')),
     path('replies/', SearchedReplyList.as_view(), name='reply_list'),
-    # path('', RedirectView.as_view(url='posts/', permanent=False), name='index'),
+    path('replies/<int:pk>/delete/', ReplyDelete.as_view(), name='reply_delete'),
+    path('replies/<int:reply_id>/reply_accept/', reply_accept_func, name='reply_accept'),
+    path('', RedirectView.as_view(url='posts/', permanent=False), name='index'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # # serving media files only on debug mode

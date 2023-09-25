@@ -21,7 +21,9 @@
             {% if user.is_authenticated %}
                 {% if curr_post|is_users_post:user %}
                     <a href="{% url 'post_update' pk=curr_post.id %}">Редактировать</a>
+{% comment %}
                     <a href="{% url 'post_delete' pk=curr_post.id %}">Удалить</a>
+{% endcomment %}
                 {% endif %}
                 {% if curr_post|is_not_users_post:user %}
                     <a href="{% url 'reply_create' post_id=curr_post.id %}">Добавить отклик</a>
