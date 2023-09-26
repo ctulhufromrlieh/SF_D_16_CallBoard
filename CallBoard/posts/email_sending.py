@@ -27,9 +27,10 @@ def load_email_last_send_date():
 
 
 def mass_email_sending():
+    print("mass_email_sending")
     # last_send_date = get_last_send_date()
     last_send_date = load_email_last_send_date()
-
+    print(last_send_date)
     # sub_user_ids = Subscription.objects.all().distinct().values_list("user", flat=True)
     # All users - subscribers (later can be changed) !
     sub_user_ids = User.objects.all().values_list("id", flat=True)
@@ -40,7 +41,9 @@ def mass_email_sending():
         curr_sub_user = User.objects.get(id=curr_sub_user_id)
 
         if last_send_date:
-            curr_posts = Post.objects.all.exclude(creation_date__lt=last_send_date)
+            curr_posts = Post.objects.all().exclude(creation_date__lt=last_send_date)
+        else:
+            curr_posts = Post.objects.all()
 
         if curr_posts.count() == 0:
             print(f"{curr_sub_user}: Ничего нет!")
@@ -50,8 +53,8 @@ def mass_email_sending():
         text_content = f"Новые объявления для {curr_sub_user.username}:\n"
         html_content = f"Новые объявления для {curr_sub_user.username}:<br>"
         for curr_post in curr_posts:
-            text_content += f"{curr_post.title} от {curr_post.author.user.username}\n"
-            html_content += f'{curr_post.title} от {curr_post.author.user.username}'
+            text_content += f"{curr_post.title} от {curr_post.author.username}\n"
+            html_content += f'{curr_post.title} от {curr_post.author.username}'
 
         text_contents = (text_content)
         html_contents = (html_content)
@@ -67,11 +70,10 @@ def send_email_about_reply_create(reply_id):
     instances = Reply.objects.filter(id=reply_id)
     if instances.count() == 0:
         return
-
     instance = instances[0]
 
     text_content = (
-        f'Вышел отклик на Ваше объявление, {instance.post.author.username}:'
+        f'Вышел отклик на Ваше объявление, {instance.post.author.username}:\n'
         f'Заголовок: {instance.post.title}\n'
         f'Категория: {instance.post.category.name}\n'
         f'Автор отклика: {instance.user.username}\n'
@@ -97,7 +99,6 @@ def send_email_about_reply_accept(reply_id):
         return
 
     instance = instances[0]
-
     text_content = (
         f'Ваш отклик одобрен, {instance.user.username}:\n'
         f'Автор: {instance.post.author.username}\n'

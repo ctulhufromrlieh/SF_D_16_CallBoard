@@ -18,6 +18,7 @@ from .filters import ReplyFilter
 # Create your views here.
 class PostList(ListView):
     model = Post
+    ordering = '-id'
     # ordering = '-creation_date'
 
     template_name = 'post_list.html'
@@ -98,7 +99,7 @@ class PostDelete(UserPassesTestMixin, DeleteView):
 
 class SearchedReplyList(LoginRequiredMixin, ListView):
     model = Reply
-    # ordering = '-creation_date'
+    ordering = '-id'
     template_name = 'replies_search.html'
     context_object_name = 'replies'
     paginate_by = 10
@@ -137,7 +138,6 @@ class ReplyCreate(UserPassesTestMixin, CreateView):
         post_id = self.kwargs.pop('post_id', None)
 
         self.object = form.save(commit=False)
-        print(post_id)
         self.object.post = Post.objects.get(id=post_id)
         self.object.user = User.objects.get(id=self.request.user.id)
         return super().form_valid(form)

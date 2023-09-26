@@ -10,10 +10,9 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
-    # 'mass_email_sending': {
-    #     'task': 'news.tasks.task_mass_email_sending',
-    #     # 'schedule': 10,
-    #     # 'schedule': crontab(minute='0', hour='8', day_of_week='mon')
-    #     # 'args': (5,),
-    # },
+    'mass_email_sending': {
+        'task': 'posts.tasks.task_mass_email_sending',
+        # 'schedule': 10,
+        'schedule': crontab(minute='0', hour='8', day_of_week='mon')
+    },
 }

@@ -25,12 +25,12 @@ from django.conf.urls.static import static
 from django.conf import settings
 # from django.conf.urls import url, include
 from posts.views import SearchedReplyList, ReplyDelete, reply_accept_func
-
 # import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
+    # path('accounts/', include('django.contrib.auth.urls')),
+    path("accounts/", include("allauth.urls")),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     # path('ckeditor/', include('ckeditor.urls')),
     path('posts/', include('posts.urls')),

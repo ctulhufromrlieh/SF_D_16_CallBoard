@@ -38,11 +38,15 @@
                        {% endif %}
                    </ul>
                </div>
-               {% if user.is_authenticated %}
                <div style = "float: right; color: white;">
-                   Добро пожаловать, {{ user.username }}
+                    {% if user.is_authenticated %}
+                        Добро пожаловать, {{ user.username }}! (<a href="{% url 'account_logout' %}">выйти</a>)
+                    {% else %}
+                        <a href="{% url 'account_login' %}">Авторизоваться</a>
+                        или
+                        <a href="{% url 'account_signup' %}">Зарегистрироваться</a>
+                    {% endif %}
                </div>
-               {% endif %}
            </div>
         </nav>
         {% comment %} {% endcache %} {% endcomment %}
