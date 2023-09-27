@@ -160,3 +160,8 @@ cython_debug/
 .idea/
 
 # settings_email.py
+celerybeat-schedule.bak
+celerybeat-schedule.dat
+celerybeat-schedule.dir
+
+media/
