@@ -104,11 +104,10 @@ class SearchedReplyList(LoginRequiredMixin, ListView):
     context_object_name = 'replies'
     paginate_by = 10
 
-    # Переопределяем функцию получения списка товаров
     def get_queryset(self):
         # Получаем обычный запрос
         queryset = super().get_queryset()
-        queryset = queryset.exclude(user__id=self.request.user.id)
+        queryset = queryset.filter(post__author__id=self.request.user.id)
 
         self.filterset = ReplyFilter(self.request.GET, queryset)
         return self.filterset.qs

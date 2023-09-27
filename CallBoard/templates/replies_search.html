@@ -32,8 +32,8 @@
                 <input type="hidden" name="next" value="{{ request.get_full_path }}">
                 <input type="submit" value="Принять">
             </form>
-            {% endif %}
             <p><a href="{% url 'reply_delete' pk=curr_reply.id %}">Удалить</a></p>
+            {% endif %}
         {% endfor %}
     {% else %}
         <h2>Нет откликов!</h2>
