@@ -145,7 +145,7 @@ class ReplyCreate(UserPassesTestMixin, CreateView):
 class ReplyDelete(UserPassesTestMixin, DeleteView):
     model = Reply
     template_name = 'reply_delete.html'
-    success_url = reverse_lazy('post_list')
+    success_url = reverse_lazy('reply_list')
 
     def test_func(self):
         the_object = self.get_object()

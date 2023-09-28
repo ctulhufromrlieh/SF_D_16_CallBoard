@@ -115,6 +115,6 @@ def send_email_about_reply_accept(reply_id):
     )
     subject = f'Ваш отклик на статью {instance.post.title} от {instance.post.author.username} принят!'
 
-    msg = EmailMultiAlternatives(subject, text_content, None, [instance.post.author.email])
+    msg = EmailMultiAlternatives(subject, text_content, None, [instance.user.email])
     msg.attach_alternative(html_content, "text/html")
     msg.send()

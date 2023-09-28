@@ -21,6 +21,10 @@ from django.urls import path
 from django.views.generic.base import RedirectView
 from django.views.static import serve
 from django.conf.urls.static import static
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
+
+from ckeditor_uploader import views as ckeditor_views
 
 from django.conf import settings
 # from django.conf.urls import url, include
@@ -31,8 +35,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # path('accounts/', include('django.contrib.auth.urls')),
     path("accounts/", include("allauth.urls")),
-    path('ckeditor/', include('ckeditor_uploader.urls')),
+    # path('ckeditor/', include('ckeditor_uploader.urls')),
     # path('ckeditor/', include('ckeditor.urls')),
+    path('ckeditor/upload/', login_required(ckeditor_views.upload), name='ckeditor_upload'),
+    path('ckeditor/browse/', never_cache(login_required(ckeditor_views.browse)), name='ckeditor_browse'),
     path('posts/', include('posts.urls')),
     path('replies/', SearchedReplyList.as_view(), name='reply_list'),
     path('replies/<int:pk>/delete/', ReplyDelete.as_view(), name='reply_delete'),
